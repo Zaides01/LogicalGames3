@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         sevenButton.setEnabled(true);
                         eightButton.setEnabled(true);
                         nineButton.setEnabled(true);
+                        list.smoothScrollToPosition(strokes);
                         if (String.valueOf(bulls).equals(level)){
                             onStop();
                         }

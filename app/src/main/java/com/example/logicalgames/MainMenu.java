@@ -50,7 +50,7 @@ public class MainMenu extends AppCompatActivity {
 
         intent = new Intent(this, MainActivity.class);
         time = getIntent().getLongExtra(TIME, 0);
-        strokes = getIntent().getLongExtra(STROKES, 1);
+        strokes = getIntent().getIntExtra(STROKES, 1);
         rating = time * strokes;
         if (rating != 0)
             strokesButton.setText(String.valueOf(rating));
