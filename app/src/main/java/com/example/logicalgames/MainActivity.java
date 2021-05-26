@@ -3,6 +3,7 @@ package com.example.logicalgames;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,10 +39,15 @@ public class MainActivity extends AppCompatActivity {
     long startTime, endTime, time;
     Intent intent;
 
+    private DatabaseReference myDataBase;
+    private String USER_KEY = "User";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        myDataBase = FirebaseDatabase.getInstance().getReference(USER_KEY);
 
         number = findViewById(R.id.number);
         deleteButton = findViewById(R.id.deleteButton);
@@ -211,8 +220,9 @@ public class MainActivity extends AppCompatActivity {
         endTime = System.currentTimeMillis();
         time = endTime - startTime;
         time /= 6000;
-        intent.putExtra("time", time);
-        intent.putExtra("strokes", strokes);
+        long r = (strokes / time);
+        String rating = String.valueOf(r);
+        intent.putExtra("rating", rating);
         startActivity(intent);
     }
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Registration"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -27,21 +26,22 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="15sp"
-        android:text="Войти"
-        android:layout_margin="5dp"
-        android:id="@+id/vhod"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:text="Зарегестрироваться"
-        android:layout_margin="5dp"
-        android:id="@+id/signIn"
-        android:onClick="onClickRegistration"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:text="Войти"
+            android:layout_margin="5dp"
+            android:id="@+id/vhod"
+            android:onClick="onClickVhod"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="Зарегестрироваться"
+            android:layout_margin="5dp"
+            android:id="@+id/signIn"
+            android:onClick="onClickRegistration"/>
     </LinearLayout>
 </LinearLayout>
