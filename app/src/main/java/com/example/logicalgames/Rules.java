@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+// change test
+
 public class Rules extends AppCompatActivity {
     TextView rules;
     Button backBut;
