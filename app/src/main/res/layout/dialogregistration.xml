@@ -12,13 +12,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="Если вы еще не регистрировались, то введите свое \nимя и нажмите на кнопку регистрации. Если же \nвы когда то регестрировались, то введите имя и \nнажмите войти"/>
+        android:text="Пароль должен состоять из цифр и латинских букв"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Логин"
+        android:hint="Почта"
         android:id="@+id/login"
+        android:layout_margin="5dp"
+        android:textSize="20sp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Пароль"
+        android:id="@+id/password"
         android:layout_margin="5dp"
         android:textSize="20sp"/>
 

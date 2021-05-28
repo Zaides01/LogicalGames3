@@ -2,6 +2,7 @@ package com.example.logicalgames;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     ListView list;
     int bulls, cows;
     int strokes = 0;
+    Dialog victory;
+    TextView back;
 
     SimpleAdapter simpleAdapter;
     LinkedList<HashMap<String, String>> mapNumber = new LinkedList<>();
@@ -39,15 +42,11 @@ public class MainActivity extends AppCompatActivity {
     long startTime, endTime, time;
     Intent intent;
 
-    private DatabaseReference myDataBase;
-    private String USER_KEY = "User";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        myDataBase = FirebaseDatabase.getInstance().getReference(USER_KEY);
 
         number = findViewById(R.id.number);
         deleteButton = findViewById(R.id.deleteButton);
@@ -63,6 +62,17 @@ public class MainActivity extends AppCompatActivity {
         eightButton = findViewById(R.id.eightButton);
         nineButton = findViewById(R.id.nineButton);
         list = findViewById(R.id.list);
+
+        victory = new Dialog(MainActivity.this);
+        victory.setContentView(R.layout.victory);
+        back = victory.findViewById(R.id.back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
 
         //TODO расчет времени игры
         startTime = System.currentTimeMillis();
@@ -108,7 +118,12 @@ public class MainActivity extends AppCompatActivity {
                         nineButton.setEnabled(true);
                         list.smoothScrollToPosition(strokes);
                         if (String.valueOf(bulls).equals(level)){
-                            onStop();
+                            endTime = System.currentTimeMillis();
+                            time = endTime - startTime;
+                            time /= 6000;
+                            long r = time / strokes;
+                            intent.putExtra("rating", r);
+                            victory.show();
                         }
                     } else Toast.makeText(getApplicationContext(), "Число не подходит по количеству цифр", Toast.LENGTH_SHORT).show();
             }
@@ -214,14 +229,5 @@ public class MainActivity extends AppCompatActivity {
         return k;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        endTime = System.currentTimeMillis();
-        time = endTime - startTime;
-        time /= 6000;
-        long r = (strokes / time);
-        intent.putExtra("rating", r);
-        startActivity(intent);
-    }
+
 }

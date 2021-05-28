@@ -41,14 +41,14 @@
             android:id="@+id/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:background="@drawable/home" />
 
         <ImageButton
             android:id="@+id/shop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.75"
             android:background="@drawable/shop" />
 
     </LinearLayout>
@@ -63,13 +63,13 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:background="@drawable/math"
             android:id="@+id/math"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:background="@drawable/words"
             android:id="@+id/words"/>
 

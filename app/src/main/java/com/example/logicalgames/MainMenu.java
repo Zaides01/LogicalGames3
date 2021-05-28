@@ -3,12 +3,15 @@ package com.example.logicalgames;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,13 +19,21 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
+
+import static android.content.ContentValues.TAG;
 
 public class MainMenu extends AppCompatActivity {
     ImageButton home, maths, shop, words;
@@ -30,17 +41,20 @@ public class MainMenu extends AppCompatActivity {
     TextView next, no, yes;
     Dialog dialog, exit, registration;
     Intent intent, rules;
-    EditText login;
+    EditText login, password;
     Button signIn, vhod;
 
-    private static final String TIME = "time";
-    private static final String STROKES = "strokes";
-    long rating;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+
+    private String USER_KEY = "User";
+
+
+    private DatabaseReference myRef;
+    int rating;
     Button strokesButton;
 
-    private DatabaseReference myDataBase;
-    private String USER_KEY = "User";
-    long idInt;
     boolean flag = false;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -69,6 +83,7 @@ public class MainMenu extends AppCompatActivity {
         words = findViewById(R.id.words);
 
         login = registration.findViewById(R.id.login);
+        password = registration.findViewById(R.id.password);
         vhod = registration.findViewById(R.id.vhod);
         signIn = registration.findViewById(R.id.signIn);
         no = exit.findViewById(R.id.no);
@@ -81,12 +96,27 @@ public class MainMenu extends AppCompatActivity {
         text6 = dialog.findViewById(R.id.text6);
 
         strokesButton = findViewById(R.id.strokes);
+        myRef = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser user = mAuth.getInstance().getCurrentUser();
 
-        myDataBase = FirebaseDatabase.getInstance().getReference(USER_KEY);
-        Random random = new Random();
-        idInt = random.nextLong();
-        //editor.putBoolean("flag", flag);
-        //editor.apply();
+        long rrt = getIntent().getLongExtra("rating", 0);
+        rating = Integer.parseInt(String.valueOf(rrt));
+
+        //TODO alex's firebase
+        myRef = FirebaseDatabase.getInstance().getReference(USER_KEY);
+
+
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                else Log.d(TAG, "onAuthStateChanged:signed_out");
+            }
+        };
+
         boolean f = sharedPreferences.getBoolean("flag", false);
         if (!f){
             registration.show();
@@ -96,28 +126,38 @@ public class MainMenu extends AppCompatActivity {
         }
 
 
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registration(login.getText().toString(), password.getText().toString());
+            }
+        });
+
+        vhod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signing(login.getText().toString(), password.getText().toString());
+            }
+        });
+
+
 
         rules = new Intent(this, Rules.class);
         intent = new Intent(this, MainActivity.class);
 
-        rating = getIntent().getLongExtra("rating", 0);
+
         if (rating != 0){
-        long r = Integer.parseInt(strokesButton.getText().toString());
-        int r1 = Integer.parseInt(String.valueOf(r)) + Integer.parseInt(String.valueOf(rating));
-        strokesButton.setText(String.valueOf(r1));
-        editor.putInt("rating", Integer.parseInt(strokesButton.getText().toString()));
-        editor.apply();
-        }else {
+            int r1;
+            long r = Integer.parseInt(strokesButton.getText().toString());
+            r1 = Integer.parseInt(String.valueOf(r)) + Integer.parseInt(String.valueOf(rating));
+            strokesButton.setText(String.valueOf(r1));
+            editor.putInt("rating", Integer.parseInt(strokesButton.getText().toString()));
+            editor.apply();
+        }else if (rating == 0){
             long l = sharedPreferences.getInt("rating", 0);
+            l+=3;
             strokesButton.setText(String.valueOf(l));
         }
-
-        //time = getIntent().getLongExtra(TIME, 0);
-        //strokes = getIntent().getIntExtra(STROKES, 1);
-
-        //if (rating != 0)
-        //    strokesButton.setText(String.valueOf(rating));
-
 
         maths.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,65 +202,59 @@ public class MainMenu extends AppCompatActivity {
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.exit(0);
+                registration.show();
             }
         });
 
-        //getFromFB();
+        //User user1 = new User(user.getUid(), rating);
+       // myRef.push().setValue(user1);
+
+
+/*        if (user.getUid() != null) {
+            myRef.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    GenericTypeIndicator<Integer> k = new GenericTypeIndicator<Integer>() {
+                    };
+                    rating = snapshot.child("rating").getValue(k);
+
+                    updateUI();
+                }
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }*/
+
 
     }
-    public void onClickRegistration(View view){
-        String id = String.valueOf(idInt);
-        String name = login.getText().toString();
-        User user = new User(id, name, rating);
-        if (!name.equals("")){
-            myDataBase.push().setValue(user);
-            editor.putString("login", name);
-            editor.putString("id", id);
-            editor.putLong("rating", rating);
-            editor.apply();
 
-            //update
-            registration.cancel();
-        }
-        else Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
-    }
-
-    public void onClickVhod (View view){
-        String name = sharedPreferences.getString("login", ""),
-                id = sharedPreferences.getString("id", "");
-        String log = login.getText().toString();
-        if (log.equals(name)){
-            registration.cancel();
-            getFromFB();
-        }else Toast.makeText(getApplicationContext(), "введите имя еще раз", Toast.LENGTH_SHORT).show();
-    }
-
-    private void getFromFB(){
-        ValueEventListener veListener = new ValueEventListener() {
+    public void registration (String email, String password){
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                /*for (DataSnapshot ds : snapshot.getChildren()){
-                    User user = ds.getValue(User.class);
-                    assert user != null;
-                    if (user.login.equals(sharedPreferences.getString("login", "")) &&
-                        user.id.equals(sharedPreferences.getString("id", ""))){
-                        long r = Integer.parseInt(user.rating);
-                        r += Integer.parseInt(rating);
-                        strokesButton.setText(String.valueOf(r));
-                        user.rating = String.valueOf(r);
-                        myDataBase.child(user.login).setValue(r);
-                    }
-                }*/
-
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainMenu.this, "Регистрация успешна", Toast.LENGTH_SHORT).show();
+                    registration.dismiss();
+                }
+                else Toast.makeText(MainMenu.this, "Регистрация провалена", Toast.LENGTH_SHORT).show();
             }
-
+        });
+    }
+    public void signing (String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {Toast.makeText(MainMenu.this, "Вход выполнен", Toast.LENGTH_SHORT).show(); registration.dismiss();}
+                else Toast.makeText(MainMenu.this, "Вход невыполнен", Toast.LENGTH_SHORT).show();
             }
-        };
-        myDataBase.addValueEventListener(veListener);
+        });
+    }
+    private void updateUI() {
+        strokesButton.setText(getBaseContext().toString());
     }
 
     @Override
