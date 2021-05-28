@@ -221,8 +221,7 @@ public class MainActivity extends AppCompatActivity {
         time = endTime - startTime;
         time /= 6000;
         long r = (strokes / time);
-        String rating = String.valueOf(r);
-        intent.putExtra("rating", rating);
+        intent.putExtra("rating", r);
         startActivity(intent);
     }
 }

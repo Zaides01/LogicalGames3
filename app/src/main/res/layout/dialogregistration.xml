@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="#A633CEC3">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,21 +28,25 @@
         android:gravity="center"
         android:orientation="horizontal">
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="15sp"
             android:text="Войти"
+            android:background="@drawable/textviewshade"
             android:layout_margin="5dp"
             android:id="@+id/vhod"
             android:onClick="onClickVhod"/>
+
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="Зарегестрироваться"
-            android:layout_margin="5dp"
             android:id="@+id/signIn"
-            android:onClick="onClickRegistration"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/textviewshade"
+            android:onClick="onClickRegistration"
+            android:text="Зарегестрироваться"
+            android:textSize="15sp" />
     </LinearLayout>
 </LinearLayout>

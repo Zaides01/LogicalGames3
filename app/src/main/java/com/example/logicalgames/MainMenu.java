@@ -35,9 +35,7 @@ public class MainMenu extends AppCompatActivity {
 
     private static final String TIME = "time";
     private static final String STROKES = "strokes";
-    long time;
-    long strokes;
-    String rating = "0";
+    long rating;
     Button strokesButton;
 
     private DatabaseReference myDataBase;
@@ -51,7 +49,7 @@ public class MainMenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sharedPreferences = getPreferences(MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -63,7 +61,7 @@ public class MainMenu extends AppCompatActivity {
         dialog.setTitle("Выберите количество цифр в числе");
         dialog.setContentView(R.layout.number);
         exit.setContentView(R.layout.exit);
-        registration.setContentView(R.layout.activity_registration);
+        registration.setContentView(R.layout.dialogregistration);
 
         maths = findViewById(R.id.math);
         home = findViewById(R.id.home);
@@ -101,6 +99,19 @@ public class MainMenu extends AppCompatActivity {
 
         rules = new Intent(this, Rules.class);
         intent = new Intent(this, MainActivity.class);
+
+        rating = getIntent().getLongExtra("rating", 0);
+        if (rating != 0){
+        long r = Integer.parseInt(strokesButton.getText().toString());
+        int r1 = Integer.parseInt(String.valueOf(r)) + Integer.parseInt(String.valueOf(rating));
+        strokesButton.setText(String.valueOf(r1));
+        editor.putInt("rating", Integer.parseInt(strokesButton.getText().toString()));
+        editor.apply();
+        }else {
+            long l = sharedPreferences.getInt("rating", 0);
+            strokesButton.setText(String.valueOf(l));
+        }
+
         //time = getIntent().getLongExtra(TIME, 0);
         //strokes = getIntent().getIntExtra(STROKES, 1);
 
@@ -155,18 +166,18 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
-        getFromFB();
+        //getFromFB();
 
     }
     public void onClickRegistration(View view){
         String id = String.valueOf(idInt);
         String name = login.getText().toString();
-        User user = new User(id, name, "10");
+        User user = new User(id, name, rating);
         if (!name.equals("")){
             myDataBase.push().setValue(user);
             editor.putString("login", name);
             editor.putString("id", id);
-            editor.putString("rating", rating);
+            editor.putLong("rating", rating);
             editor.apply();
 
             //update
@@ -189,7 +200,7 @@ public class MainMenu extends AppCompatActivity {
         ValueEventListener veListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()){
+                /*for (DataSnapshot ds : snapshot.getChildren()){
                     User user = ds.getValue(User.class);
                     assert user != null;
                     if (user.login.equals(sharedPreferences.getString("login", "")) &&
@@ -200,7 +211,8 @@ public class MainMenu extends AppCompatActivity {
                         user.rating = String.valueOf(r);
                         myDataBase.child(user.login).setValue(r);
                     }
-                }
+                }*/
+
             }
 
             @Override
@@ -214,6 +226,5 @@ public class MainMenu extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        rating = getIntent().getStringExtra("rating");
     }
 }
