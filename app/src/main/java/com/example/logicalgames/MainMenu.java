@@ -102,7 +102,7 @@ public class MainMenu extends AppCompatActivity {
         long rrt = getIntent().getLongExtra("rating", 0);
         rating = Integer.parseInt(String.valueOf(rrt));
 
-        //TODO alex's firebase
+
         myRef = FirebaseDatabase.getInstance().getReference(USER_KEY);
 
 
@@ -148,14 +148,13 @@ public class MainMenu extends AppCompatActivity {
 
         if (rating != 0){
             int r1;
-            long r = Integer.parseInt(strokesButton.getText().toString());
-            r1 = Integer.parseInt(String.valueOf(r)) + Integer.parseInt(String.valueOf(rating));
+            int r = Integer.parseInt(strokesButton.getText().toString());
+            r1 = r + rating;
             strokesButton.setText(String.valueOf(r1));
             editor.putInt("rating", Integer.parseInt(strokesButton.getText().toString()));
             editor.apply();
         }else if (rating == 0){
-            long l = sharedPreferences.getInt("rating", 0);
-            l+=3;
+            int l = sharedPreferences.getInt("rating", 0);
             strokesButton.setText(String.valueOf(l));
         }
 
@@ -239,6 +238,7 @@ public class MainMenu extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Toast.makeText(MainMenu.this, "Регистрация успешна", Toast.LENGTH_SHORT).show();
                     registration.dismiss();
+                    if (exit.isShowing()) exit.dismiss();
                 }
                 else Toast.makeText(MainMenu.this, "Регистрация провалена", Toast.LENGTH_SHORT).show();
             }
@@ -248,7 +248,11 @@ public class MainMenu extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {Toast.makeText(MainMenu.this, "Вход выполнен", Toast.LENGTH_SHORT).show(); registration.dismiss();}
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainMenu.this, "Вход выполнен", Toast.LENGTH_SHORT).show(); registration.dismiss();
+                    registration.dismiss();
+                    exit.dismiss();
+                }
                 else Toast.makeText(MainMenu.this, "Вход невыполнен", Toast.LENGTH_SHORT).show();
             }
         });

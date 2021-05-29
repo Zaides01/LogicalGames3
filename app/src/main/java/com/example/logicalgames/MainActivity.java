@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             time = endTime - startTime;
                             time /= 6000;
                             long r = time / strokes;
+                            if (r == 0) r += 2;
                             intent.putExtra("rating", r);
                             victory.show();
                         }
